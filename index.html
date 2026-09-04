@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXmobile | Trusted Used Phone Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-mobile-screen-button"></i> <span>EX</span>mobile
+        </div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="javascript:void(0)" onclick="openSafetyModal()">Safety Checklist</a>
+            <a href="post-ad.html" class="btn-post"><i class="fa-solid fa-plus"></i> Post Free Ad</a>
+        </nav>
+    </header>
+
+<!-- Search Hero Banner -->
+<section class="hero">
+    <h1 class="animated-heading">
+        Trusted <span class="gradient-text">Phone Exchange</span> SL
+    </h1>
+    <p>Verified Sellers • Quality Checked • 100% Safe Deals</p>
+    
+    <div class="search-box">
+        <input type="text" placeholder="Search phone model (e.g. Pixel 8, iPhone 14, Galaxy A15)...">
+        <button class="btn-search"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </div>
+</section>
+
+    <!-- Trust Indicator Bar -->
+    <section class="trust-bar">
+        <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> 100% Verified Ads</div>
+        <div class="trust-item"><i class="fa-solid fa-comments"></i> Direct WhatsApp Chat</div>
+        <div class="trust-item"><i class="fa-solid fa-user-check"></i> Seller Rating System</div>
+    </section>
+
+    <!-- Main Listings Section -->
+    <main class="container">
+
+        <!-- Category Filter Buttons Section -->
+        <section id="categories" class="category-section">
+            <div class="categories">
+                <button class="cat-btn active" onclick="filterByCategory('all', this)">All</button>
+                <button class="cat-btn" onclick="filterByCategory('apple', this)">Apple</button>
+                <button class="cat-btn" onclick="filterByCategory('samsung', this)">Samsung</button>
+                <button class="cat-btn" onclick="filterByCategory('pixel', this)">Google Pixel</button>
+                <button class="cat-btn" onclick="filterByCategory('xiaomi', this)">Xiaomi</button>
+                <button class="cat-btn" onclick="filterByCategory('vivo', this)">Vivo</button>
+            </div>
+        </section>
+
+        <h2>Featured & Trusted Listings</h2>
+        
+        <div class="phone-grid">
+            <!-- Dynamic Ads Load වේ -->
+        </div>
+    </main>
+
+    <!-- Safety Checklist Modal -->
+<div id="safetyModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSafetyModal()">&times;</span>
+        <h2><i class="fa-solid fa-shield-halved" style="color: #2563eb;"></i> Buyer Safety Checklist</h2>
+        <p class="modal-sub">EXmobile හරහා ෆෝන් එකක් මිලදී ගැනීමට පෙර මේ කරුණු ගැන සැලකිලිමත් වන්න:</p>
+        
+        <ul class="safety-list">
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Direct Inspection:</strong> ෆෝන් එක පරීක්ෂා කිරීමට පෙර කිසිවිටෙකත් අත්පිට මුදල් (Advance payments) තැන්පත් නොකරන්න.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Public Meeting:</strong> සෙලර් හමුවීමට ප්‍රසිද්ධ, ආරක්ෂිත ස්ථානයක් (Public Place) තෝරාගන්න.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>IMEI & TRC Check:</strong> `*#06#` ඩයල් කර IMEI අංකය TRCSL අනුමත දැයි පරීක්ෂා කර බලන්න.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Hardware Check:</strong> Display, Camera, Charging Port සහ Display Touch නිසි ලෙස වැඩ කරනවාදැයි පරීක්ෂා කරන්න.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Account Logout:</strong> ෆෝන් එක ගැනීමට පෙර Apple ID / iCloud / Google Accounts ඉවත් කර (Reset) ඇති බව තහවුරු කරගන්න.</li>
+        </ul>
+    </div>
+</div>
+
+    <script>
+let allAds = [];
+
+async function loadAds() {
+    try {
+        // Vercel Live Backend URL එක මඟින් Update කරන ලදී
+        const response = await fetch('https://exmobile-backend-api.vercel.app/api/ads');
+        allAds = await response.json();
+        renderAds(allAds);
+    } catch (error) {
+        console.error('Error loading ads:', error);
+    }
+}
+
+function renderAds(adsToDisplay) {
+    const adsContainer = document.querySelector('.phone-grid');
+    if (!adsContainer) return;
+
+    if (adsToDisplay.length === 0) {
+        adsContainer.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>දැනට එක ගැලපෙන Ad එකක්වත් නැත.</p>
+            </div>`;
+        return;
+    }
+
+    adsContainer.innerHTML = ''; 
+
+    adsToDisplay.forEach(ad => {
+        let mainImage = 'https://via.placeholder.com/300x200?text=No+Image';
+        if (Array.isArray(ad.images) && ad.images.length > 0) {
+            mainImage = ad.images[0];
+        } else if (typeof ad.images === 'string' && ad.images.trim() !== '') {
+            mainImage = ad.images;
+        }
+
+        const formattedPhone = ad.whatsapp ? '94' + ad.whatsapp.toString().replace(/^0/, '') : '';
+
+        const adCard = `
+            <div class="card" onclick="window.location.href='ad-details.html?id=${ad._id}'" style="cursor: pointer;">
+                <div class="img-container">
+                    <img src="${mainImage}" alt="${ad.model || 'Phone'}">
+                </div>
+                <div class="card-content">
+                    <div class="category">${ad.brand || 'Mobile'}</div>
+                    <h3>${ad.brand || ''} ${ad.model || ''} (${ad.storage || 'N/A'})</h3>
+                    <p class="condition">
+                        <i class="fa-solid fa-shield"></i> 
+                        ${ad.batteryHealth ? 'Battery ' + ad.batteryHealth + '% • ' : ''} ${ad.condition || 'Used'}
+                    </p>
+                    <div class="price">Rs. ${Number(ad.price || 0).toLocaleString()}</div>
+                    <div class="seller-info">
+                        <span><i class="fa-solid fa-location-dot"></i> ${ad.location || 'Sri Lanka'}</span>
+                        <span class="rating">Seller: ${ad.sellerName || 'Private'}</span>
+                    </div>
+                    <a href="https://wa.me/${formattedPhone}?text=Hi,%20I'm%20interested%20in%20your%20${encodeURIComponent((ad.brand || '') + ' ' + (ad.model || ''))}%20listed%20on%20EXmobile" 
+                       target="_blank" class="btn-contact" onclick="event.stopPropagation();">
+                        <i class="fa-brands fa-whatsapp"></i> Chat with Seller
+                    </a>
+                </div>
+            </div>
+        `;
+        adsContainer.innerHTML += adCard;
+    });
+}
+
+// Search Input එකෙන් Filter කිරීම
+function filterAds() {
+    const searchInput = document.querySelector('.search-box input').value.toLowerCase().trim();
+
+    // Search කරද්දී category buttons වල active state එක ගලවනවා
+    const buttons = document.querySelectorAll('.cat-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    const filtered = allAds.filter(ad => {
+        return searchInput === '' || 
+            (ad.model && ad.model.toLowerCase().includes(searchInput)) || 
+            (ad.brand && ad.brand.toLowerCase().includes(searchInput)) ||
+            (ad.description && ad.description.toLowerCase().includes(searchInput)) ||
+            (ad.location && ad.location.toLowerCase().includes(searchInput));
+    });
+
+    renderAds(filtered);
+}
+
+// Category Buttons වලින් Filter කිරීම
+function filterByCategory(brand, buttonElement) {
+    const buttons = document.querySelectorAll('.cat-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    if (buttonElement) {
+        buttonElement.classList.add('active');
+    }
+
+    const searchInput = document.querySelector('.search-box input');
+    if (searchInput) searchInput.value = '';
+
+    if (brand === 'all') {
+        renderAds(allAds);
+    } else {
+        const filtered = allAds.filter(ad => {
+            if (!ad.brand) return false;
+            const adBrand = ad.brand.toLowerCase();
+            if (brand === 'pixel') {
+                return adBrand.includes('pixel') || adBrand.includes('google');
+            }
+            return adBrand.includes(brand.toLowerCase());
+        });
+        renderAds(filtered);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadAds();
+
+    const searchBtn = document.querySelector('.btn-search');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterAds();
+        });
+    }
+
+    const searchInput = document.querySelector('.search-box input');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') filterAds();
+        });
+    }
+});
+
+// Safety Modal Open / Close Functions
+function openSafetyModal() {
+    document.getElementById('safetyModal').style.display = 'block';
+}
+
+function closeSafetyModal() {
+    document.getElementById('safetyModal').style.display = 'none';
+}
+
+// Modal එකෙන් එළිය ක්ලික් කළාම Close වීම
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('safetyModal');
+    if (e.target === modal) {
+        closeSafetyModal();
+    }
+});
+</script>
+
+</body>
+</html>
