@@ -571,3 +571,31 @@ input:focus, select:focus, textarea:focus {
         font-size: 1.55rem; /* Mobile එකට ගානට Fit වෙන Size එක */
     }
 }
+
+
+
+
+/* Mobile Navigation Fix */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 10px 15px;
+  }
+
+  nav {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  nav a {
+    font-size: 14px;
+  }
+
+  .post-ad-btn {
+    margin-top: 5px;
+  }
+}
