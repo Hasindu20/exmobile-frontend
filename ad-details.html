@@ -318,6 +318,34 @@
     }
 
     document.addEventListener('DOMContentLoaded', fetchAdDetails);
+
+
+
+
+
+
+        // Ad එකක් Delete කරන Function එක
+async function deleteAd(adId) {
+  const confirmDelete = confirm("ඔබට විශ්වාසද මෙම Ad එක Delete කිරීමට අවශ්‍ය බව?");
+  
+  if (confirmDelete) {
+    try {
+      const response = await fetch(`https://exmobile-backend-api.vercel.app/api/ads/${adId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert("Ad එක සාර්ථකව Delete විය!");
+        window.location.href = 'index.html'; // Home Page එකට යැවීම
+      } else {
+        alert("Delete කිරීමට නොහැකි විය. නැවත උත්සාහ කරන්න.");
+      }
+    } catch (error) {
+      console.error('Error deleting ad:', error);
+      alert("සර්වර් එකේ දෝෂයක් ආවා!");
+    }
+  }
+}
 </script>
 
 </body>
